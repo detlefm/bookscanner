@@ -8,14 +8,13 @@ Install the nessesary moduls (see requirements.txt).\
 Edit the prompt inside of prompts.py to your needs. \
 Provide an API key from OpenAI within an .env file or via environments variable
 
-Call 
-python app.py foldername outfilename.docx \
+Call \
+#### python app.py foldername outfilename.docx \
 this will ocr all image files within this folder.\
 The ocr result is written inside this folder as imagefilename.json and can used\
 later. A second call will only ocr images where no imagefilename.json exists.\
 or\
-Call \
-scriptit app.py \
+#### scriptit app.py \
 to ocr one single image you can choose with the web interface.\
 
 
