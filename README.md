@@ -1,21 +1,22 @@
 # bookscanner
-OCR tools to convert a typewritten manuscript or a printed book into plain text and create a PDF file with all scanned manuscript or book pages and a Word file with the extracted text.
-Current state: 
+OCR tools to convert a typewritten manuscript or a printed book into plain text and create a PDF file with all scanned manuscript or book pages and a Word file with the extracted text.\
+Current state: \
 Two interfaces: commandline and scriptit
 
 # usage
-Install the nessesary moduls (see requirements.txt).
-Edit the prompt inside of prompts.py to your needs. 
+Install the nessesary moduls (see requirements.txt).\
+Edit the prompt inside of prompts.py to your needs. \
+Provide an API key from OpenAI within an .env file or via environments variable
 
 Call 
-python app.py foldername outfilename.docx 
-this will ocr all image files within this folder.
-The ocr result is written inside this folder as imagefilename.json and can used
-later. A second call will only ocr images where no imagefilename.json exists.
-or
-Call 
-scriptit app.py 
-to ocr one single image you can choose with the web interface.
+python app.py foldername outfilename.docx \
+this will ocr all image files within this folder.\
+The ocr result is written inside this folder as imagefilename.json and can used\
+later. A second call will only ocr images where no imagefilename.json exists.\
+or\
+Call \
+scriptit app.py \
+to ocr one single image you can choose with the web interface.\
 
 
 ## Reason
