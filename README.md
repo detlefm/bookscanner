@@ -3,19 +3,28 @@ OCR tools to convert a typewritten manuscript or a printed book into plain text 
 Current state: \
 Two interfaces: commandline and scriptit
 
-# usage
+## Usage
 Install the nessesary moduls (see requirements.txt).\
-Edit the prompt inside of prompts.py to your needs. \
+Edit the prompt inside of contants.py to your needs. \
 Provide an API key from OpenAI within an .env file or via environments variable
 
-Call 
-#### python app.py foldername outfilename.docx 
-this will ocr all image files within this folder.\
-The ocr result is written inside this folder as imagefilename.json and can used\
-later. A second call will only ocr images where no imagefilename.json exists.\
-or
+Commandline calls
 #### scriptit app.py 
-to ocr one single image you can choose with the web interface.
+To ocr one single image you can choose with the web interface.
+
+#### python app.py normalize foldername bookno 
+bookno must be an integer. This normalize the filenames from Microsoft Lens 
+into something like 'Book_XX_Page_XX.jpeg'
+#### python app.py make_word foldername bookno 
+This will ocr all image files within this folder.\
+The ocr result is written inside this folder as imagefilename.json and will be used\
+later. A second call will only ocr images where no imagefilename.json exists.
+#### python app.py make_pdf foldername bookno 
+This produce a pdf file with all image files within this folder.\
+The image files will be sorted by name and then stored inside the pdf file.
+
+
+
 
 
 ## Reason
@@ -28,7 +37,7 @@ A commercial scanner was too expensive and would no longer be needed after this 
 A few Python scripts and the generated jpg files were given names like Page_001, Page_002, etc.
 
 ## OCR
-I chose gpt 4o as the OCR software. The costs are manageable (approx. US$1.50 per 100 pages)
+I chose gpt-4o as the OCR software. The costs are manageable (approx. US$1.50 per 100 pages)
 Additional benefit: No training in special software such as Tesseract and Keras-OCR, but I was able to learn the ChatGPT API.
 
 ## Output
@@ -38,4 +47,11 @@ The output should be a Word file on the one hand and a PDF document with the sca
 Scanning took me around 45 minutes for 150 pages. Then I looked through the scans, replaced the bad ones and fixed one or two things. That would not have been necessary for the OCR process, but for the PDF document the scan should look as good as possible. The OCR process with ChatGPT was around 17 seconds per image.
 
 
+## Alternative
+Instead of going the Microsoft Lens -> Cleanup File Names -> OCR route, it is also possible to simply let Microsoft Lens do the work.\
+There is an option to transcribe the image and save the image together with the plain text as a Word document. Microsoft Lens does a good job of this and manages to largely retain the original formatting.
+
+
+## Miscellaneous
 I got help from DeepSeek Coder-V2. Of course you can get everything directly on the Internet, but a chatbot is (at least for me) a significant help.
+

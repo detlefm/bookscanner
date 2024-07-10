@@ -5,6 +5,7 @@ from io import BytesIO
 from pathlib import Path
 from collections import defaultdict
 import shutil
+from constants import BOOK_PREFIX, PAGE_PREFIX
 
 image_extensions = ['.png','.jpg','.jpeg']
 
@@ -62,20 +63,19 @@ def getfiles(path,suffixes:list=image_extensions)-> list[Path]:
 
 
 
-def normalize_filenames(files:list[Path]):
+def normalize_lens_filenames(files:list[Path]):
     tochange = [f for f in files if f.stem.endswith(')') == False]
-    result:list[tuple[Path,Path]] = []
     for f in tochange:
-        newname = f.with_stem(f.stem+' (0)')
-        result.append((f,newname))
-    return result
+        new = f.with_stem(f.stem+' (0)')
+        shutil.move(f,new)
+
 
 
 def rename_to_pagenumbers(bookno:int,files:list[Path]):
     counter = 0
     for f in files:
         counter +=1
-        nn = f.with_stem(f'Buch_{bookno:02}_Page_{counter:03}')
+        nn = f.with_stem(f'{BOOK_PREFIX}_{bookno:02}_{PAGE_PREFIX}_{counter:03}')
         shutil.move(f,nn)
 
 
