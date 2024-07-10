@@ -15,7 +15,7 @@ The ocr result is written inside this folder as imagefilename.json and can used\
 later. A second call will only ocr images where no imagefilename.json exists.\
 or
 #### scriptit app.py 
-to ocr one single image you can choose with the web interface.\
+to ocr one single image you can choose with the web interface.
 
 
 ## Reason
