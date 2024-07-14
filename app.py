@@ -31,7 +31,7 @@ def create_pdf(folder:str, bookno:int):
     files = getfiles(folder)
     pdffilename = f'{BOOK_PREFIX}_{bookno:02}.pdf'
     outpath = os.path.join(folder,pdffilename)    
-    pdf_from_images(outfile=outpath,files=files[:20])
+    pdf_from_images(outfile=outpath,files=files)
 
 
 
