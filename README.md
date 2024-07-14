@@ -13,19 +13,17 @@ Commandline calls
 To ocr one single image you can choose with the web interface.
 
 #### python app.py normalize foldername bookno 
-bookno must be an integer. This normalize the filenames from Microsoft Lens 
+'bookno' must be an integer. This normalize the filenames from Microsoft Lens 
 into something like 'Book_XX_Page_XX.jpeg'
+#### python app.py ocr_folder foldername bookno
+Starts the OCR process and generates a json file with the ocr result for every image in the 'folder'. 
+A second call will only ocr images where no imagefilename.json exists.\
+The 'bookno' is not needed but I havn't implemented a seperate logic to assert the parameters.
 #### python app.py make_word foldername bookno 
-This will ocr all image files within this folder.\
-The ocr result is written inside this folder as imagefilename.json and will be used\
-later. A second call will only ocr images where no imagefilename.json exists.
+Produces a word file with all OCR results
 #### python app.py make_pdf foldername bookno 
 This produce a pdf file with all image files within this folder.\
 The image files will be sorted by name and then stored inside the pdf file.
-
-
-
-
 
 ## Reason
 My wife had inherited a book manuscript (650 A4 pages) written on a typewriter from her father. As a memory of her father and as a legacy for the whole family, the plan was to scan the book. Then it would be converted into a Word document for future processing using OCR. And the family members would receive the original manuscript as a PDF file.

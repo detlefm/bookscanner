@@ -1,17 +1,15 @@
 from dotenv import load_dotenv
 import os
 import sys
-from ocr_folder import ocr_files
-from openai_base import Chat_Result, ask
+from openai_base import ask_openai
+from chat_result import Chat_Result
 from xdocx import text_to_word
 import streamlit as st
 from PIL import Image
 from constants import ocr_prompt, BOOK_PREFIX
 from xfile import getfiles, normalize_lens_filenames, rename_to_pagenumbers
-from pathlib import Path
 from pdfcreator import pdf_from_images
 from utils import print_duration
-import shutil
 
 
 load_dotenv(".env")
@@ -31,20 +29,46 @@ def normalize_filenames(folder, bookno):
 
 def create_pdf(folder:str, bookno:int):
     files = getfiles(folder)
-    pdffilename = f'{BOOK_PREFIX}_{bookno:02}.docx'
+    pdffilename = f'{BOOK_PREFIX}_{bookno:02}.pdf'
     outpath = os.path.join(folder,pdffilename)    
-    pdf_from_images(outfile=outpath,files=files)
+    pdf_from_images(outfile=outpath,files=files[:20])
 
+
+
+
+def ocr_folder(folder:str, 
+               prompt:str = ocr_prompt,
+               log:bool = False) -> dict:
+    contentdict = {}
+    # collect files 
+    for file in getfiles(folder):
+        jsonfile = file.with_suffix('.json')
+        if jsonfile.exists():
+            if log:
+                print(f'skipped ocr {file.stem}')
+            jsonstr = jsonfile.read_text(encoding='utf-8')
+            result = Chat_Result.from_json(jsonstr=jsonstr)
+        else:
+            if log:
+                print(f'run ocr {file.stem}')
+            # run ocr
+            result = ask_openai(str(file),prompt=prompt)             
+            jsonfile.write_text(data=result.tojson(),encoding='utf-8')
+        contentdict[file] = result
+    return contentdict
 
 
 @print_duration
 def create_word(folder:str, bookno:int):
     files = getfiles(folder)
-    d:dict[str,Chat_Result] = ocr_files(files=files,prompt=ocr_prompt,log=True)
-    print(f'Files count: {len(d)}') 
     txtlst = []
-    for key in sorted(d.keys()):
-        txtlst.append(d[key].content)
+    for file in files:
+        jsonfile = file.with_suffix('.json')
+        if jsonfile.exists()==False:
+            print(f'Missing datafile {jsonfile.name}')
+            continue
+        jsonstr = jsonfile.read_text('utf-8')
+        txtlst.append(Chat_Result.from_json(jsonstr=jsonstr).content)
     wordfilename = f'{BOOK_PREFIX}_{bookno:02}.docx'
     outpath = os.path.join(folder,wordfilename)
     text_to_word(word_file=outpath,txtlst=txtlst)
@@ -63,20 +87,24 @@ def streamlit_interface():
     st.title('OCR pictures')
     left, right = st.columns(2)
     with left:
-        uploaded_file = st.file_uploader(label='Upload page',type=['.png','.jpg','.jpeg'],accept_multiple_files=False)
+        uploaded_file = st.file_uploader(label='Upload page',
+                                         type=['.png','.jpg','.jpeg'],
+                                         accept_multiple_files=False)
         if uploaded_file:  
             if st.button("start"):
                 with st.spinner():
-                    answer = ask(source=uploaded_file,mtype=uploaded_file.type,prompt=ocr_prompt)
+                    answer = ask_openai(source=uploaded_file,prompt=ocr_prompt)
+                    result = Chat_Result.from_completion(completion=answer)
                     with right:
                         st.subheader("Result")
-                        st.write(answer.content)
+                        st.write(result.content)
                 image = Image.open(uploaded_file)
                 st.image(image, use_column_width=True)
 
 
 jumpdict = {
     'normalize': normalize_filenames,
+    'ocr_images': ocr_folder,
     'make_word': create_word,
     'make_pdf': create_pdf
 }

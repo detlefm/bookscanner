@@ -1,4 +1,24 @@
 from datetime import datetime
+from collections import deque
+
+
+class DequeIterator:
+    def __init__(self, ringpuffer:deque):
+        self.ringpuffer:deque = ringpuffer
+        self.index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if len(self.ringpuffer) == 0:
+            raise StopIteration
+        element = self.ringpuffer[self.index]
+        self.index = (self.index + 1) % len(self.ringpuffer)
+        return element
+
+
+
 
 
 def print_duration(func):

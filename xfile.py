@@ -5,38 +5,44 @@ from io import BytesIO
 from pathlib import Path
 from collections import defaultdict
 import shutil
+import re
+import os
 from constants import BOOK_PREFIX, PAGE_PREFIX
+
 
 image_extensions = ['.png','.jpg','.jpeg']
 
 
-# def mimetype_base64(text:str):
-#     if text.startswith()
-#     JPEG-Bilder:
-
-# Präfix: 9j/ MIME-Typ: image/jpeg
-
-# Präfix: iVBORw0KGgoAAA MIME-Typ: image/png
-
-# Präfix: R0lGOD MIME-Typ: image/gif
 
 
-# Präfix: PHN2Zy MIME-Typ: image/svg+xml
+base64_mime_type = {
+    '/9j/':'image/jpeg',
+    'iVBORw0KGgoAAA':'image/png',
+    'R0lGOD':'image/gif',
+    'PHN2Zy':'image/svg+xml',
+    'JVBERi0xLj':'application/pdf',
+    # 'data:text/plain;base64,':'text/plain',
+    # 'data:text/html;base64,':'text/html',
+    # 'data:application/json;base64,':'application/json',
+    # 'data:application/xml;base64,':'application/xml',
+    'UEsDBBQ':'application/zip',
+}
 
-# Präfix: JVBERi0xLj MIME-Typ: application/pdf
 
-# Präfix: data:text/plain;base64, MIME-Typ: text/plain
+# Todo: Only tested with jpg and png
 
+def mimetype_base64(text:str): 
+    prefix = text[:min(50,len(text))]
+    print(prefix)
+    if prefix.startswith('data:'):
+        match = re.search(r"data:(.*);", text)
+        if match:
+            return match.group(1)
+    elif (found := [key for key in base64_mime_type.keys() 
+                        if prefix.startswith(key)]):
+        return base64_mime_type[found[0]]
+    raise LookupError(f'Unknown mime type {text[:min(50,len(text))]}...')
 
-# Präfix: data:text/html;base64, MIME-Typ: text/html
-
-
-# Präfix: data:application/json;base64, MIME-Typ: application/json
-
-# Präfix: data:application/xml;base64, MIME-Typ: application/xml
-
-
-# Präfix: UEsDBBQ MIME-Typ: application/zip
 
 def load_img(image_url:str) ->ImageFile:
     # URL des externen Bildes
@@ -47,7 +53,7 @@ def load_img(image_url:str) ->ImageFile:
     image = Image.open(BytesIO(response.content))
     return image
 
-def convert2base64(img_file:Image) -> str:
+def image2base64(img_file:Image) -> str:
     buffered = BytesIO()
     img_file.save(buffered,format = "PNG")
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
@@ -61,22 +67,22 @@ def getfiles(path,suffixes:list=image_extensions)-> list[Path]:
                     p.suffix in suffixes])
 
 
-
+def create_folder(folder:str|Path):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
 def normalize_lens_filenames(files:list[Path]):
-    tochange = [f for f in files if f.stem.endswith(')') == False]
-    for f in tochange:
-        new = f.with_stem(f.stem+' (0)')
-        shutil.move(f,new)
+    for file in [f for f in files if f.stem.endswith('Office Lens')]:
+        new = file.with_stem(file.stem+' (0)')
+        shutil.move(file,new)
 
 
 
 def rename_to_pagenumbers(bookno:int,files:list[Path]):
-    counter = 0
-    for f in files:
-        counter +=1
-        nn = f.with_stem(f'{BOOK_PREFIX}_{bookno:02}_{PAGE_PREFIX}_{counter:03}')
-        shutil.move(f,nn)
+    for index, file in enumerate(files):
+        nn = file.with_stem(f'{BOOK_PREFIX}_{bookno:02}{PAGE_PREFIX}_{(index+1):03}')
+        shutil.move(file,nn)       
+
 
 
 
@@ -85,7 +91,4 @@ if __name__ == "__main__":
     import sys
     files = getfiles(sys.argv[1])
     rename_to_pagenumbers(bookno=2,files=files)
-    # tochangelst = normalize_filenames(files=files)
-    # for old,new in tochangelst:
-    #     shutil.move(old,new)
-    # print(len(tochangelst))
+
