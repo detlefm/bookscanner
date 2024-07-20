@@ -3,11 +3,10 @@ ocr_prompt="""
 Transcribe this image with Slovak text into plain Slovak text. Keep the formatting. 
 Return only the Slovak text without annotations.Ignore handwritten notes.
 """
-BOOK_PREFIX="Buch"
+book_prefix="Kniha"
 
-PAGE_PREFIX="_Page"
+page_prefix="_Strana"
 
-#PDF_BACKGROUND = r".\data\bg_muster.jpg"
-PDF_BACKGROUND = "./data"
+pdf_background = "./data/bg_textur.jpg"
 
-DOC_TEMPLATE = "./data/template.docx"
+doc_template = "./data/template.docx"

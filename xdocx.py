@@ -4,7 +4,8 @@ import os
 from pathlib import Path
 import shutil
 from xfile import getfiles
-from constants import DOC_TEMPLATE
+#from constants import DOC_TEMPLATE
+from config import config
 
 
 def docx_from_template(filename:str, append:bool=False):
@@ -13,8 +14,9 @@ def docx_from_template(filename:str, append:bool=False):
             return Document(filename)
         else:
             os.remove(filename)
-    if os.path.exists(DOC_TEMPLATE):
-        shutil.copy(DOC_TEMPLATE,filename)
+    templatename = config.getvalue('doc_template')
+    if os.path.exists(templatename):
+        shutil.copy(templatename,filename)
         return Document(filename)
     return Document()
 

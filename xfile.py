@@ -7,7 +7,7 @@ from collections import defaultdict
 import shutil
 import re
 import os
-from constants import BOOK_PREFIX, PAGE_PREFIX
+
 
 
 image_extensions = ['.png','.jpg','.jpeg']
@@ -33,7 +33,6 @@ base64_mime_type = {
 
 def mimetype_base64(text:str): 
     prefix = text[:min(50,len(text))]
-    print(prefix)
     if prefix.startswith('data:'):
         match = re.search(r"data:(.*);", text)
         if match:
@@ -77,18 +76,4 @@ def normalize_lens_filenames(files:list[Path]):
         shutil.move(file,new)
 
 
-
-def rename_to_pagenumbers(bookno:int,files:list[Path]):
-    for index, file in enumerate(files):
-        nn = file.with_stem(f'{BOOK_PREFIX}_{bookno:02}{PAGE_PREFIX}_{(index+1):03}')
-        shutil.move(file,nn)       
-
-
-
-
-
-if __name__ == "__main__":
-    import sys
-    files = getfiles(sys.argv[1])
-    rename_to_pagenumbers(bookno=2,files=files)
 

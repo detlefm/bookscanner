@@ -9,19 +9,17 @@ Edit the prompt inside of contants.py to your needs. \
 Provide an API key from OpenAI within an .env file or via environments variable
 
 Commandline calls
-#### scriptit app.py 
-To ocr one single image you can choose with the web interface.
+#### scriptit web_app.py 
+For testing the openai api. Provide a prompt and optional an image and ask gpt-4o-mini
 
-#### python app.py normalize foldername bookno 
-'bookno' must be an integer. This normalize the filenames from Microsoft Lens 
-into something like 'Book_XX_Page_XX.jpeg'
-#### python app.py ocr_folder foldername bookno
+#### python terminal_app.py normalize foldername  
+This normalize the filenames from Microsoft Lens into something like 'Book_Page_XX.jpeg'
+#### python terminal_app.py ocr_folder foldername
 Starts the OCR process and generates a json file with the ocr result for every image in the 'folder'. 
 A second call will only ocr images where no imagefilename.json exists.\
-The 'bookno' is not needed but I havn't implemented a seperate logic to assert the parameters.
-#### python app.py make_word foldername bookno 
+#### python terminal_app.py make_word foldername destinationfilename 
 Produces a word file with all OCR results
-#### python app.py make_pdf foldername bookno 
+#### python terminal_app.py make_pdf foldername destinationfilename 
 This produce a pdf file with all image files within this folder.\
 The image files will be sorted by name and then stored inside the pdf file.
 
@@ -37,12 +35,13 @@ A few Python scripts and the generated jpg files were given names like Page_001,
 ## OCR
 I chose gpt-4o as the OCR software. The costs are manageable (approx. US$1.50 per 100 pages)
 Additional benefit: No training in special software such as Tesseract and Keras-OCR, but I was able to learn the ChatGPT API.
+As of mid july 24: OpenAI has provided a new model: gpt-4o-mini with much less costs.
 
 ## Output
 The output should be a Word file on the one hand and a PDF document with the scanned original pages on the other. In Python, this is not rocket science with python-docx and reportlab.
 
 ## Time required
-Scanning took me around 45 minutes for 150 pages. Then I looked through the scans, replaced the bad ones and fixed one or two things. That would not have been necessary for the OCR process, but for the PDF document the scan should look as good as possible. The OCR process with ChatGPT was around 17 seconds per image.
+Scanning took me around 45 minutes for 150 pages. Then I looked through the scans, replaced the bad ones and fixed one or two things. That would not have been necessary for the OCR process, but for the PDF document the scan should look as good as possible. The OCR process with ChatGPT 4o was around 17 seconds per image.
 
 
 ## Alternative

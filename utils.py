@@ -17,6 +17,15 @@ class DequeIterator:
         self.index = (self.index + 1) % len(self.ringpuffer)
         return element
 
+def debug_arguments(attrs:list[str]):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            print(f'{func.__name__}')
+            print(f'Expected: {','.join(attrs)}')
+            print(f'Got {args} and {kwargs}')
+            #return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 
